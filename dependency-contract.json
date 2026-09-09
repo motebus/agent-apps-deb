@@ -1,0 +1,91 @@
+{
+  "schema": "agent-apps-dependency-contract/v1",
+  "dependencies": {
+    "agos": "2.0.0-2",
+    "ss-webos": "2.0.0-11",
+    "mdesk": "3.0.0-6",
+    "mote-bridge-mcp": "3.0.0-2",
+    "cx-agent": "0.3.4-2",
+    "uchat": "2.0.0-3",
+    "mote-vault-sync": "1.1.0-3",
+    "mote-vault-syncd": "1.1.0-3",
+    "mote-secd": "1.0.0-2",
+    "codex-mesh": "1.0.0-1",
+    "obsidian": "1.13.7",
+    "model-router": "0.1.0-1",
+    "model-llm": "0.1.0-3"
+  },
+  "suggests": [],
+  "installable": false,
+  "readiness": false,
+  "missing_dependencies": [
+    {
+      "name": "agos",
+      "minimum_version": "2.0.0-2",
+      "status": "compatible-public-release-unverified",
+      "rejected_historical_version": "1.0.0-16"
+    },
+    {
+      "name": "cx-agent",
+      "minimum_version": "0.3.4-2",
+      "status": "compatible-public-release-unverified",
+      "replaces_package": "cx-node",
+      "rejected_historical_version": "0.3.4-1"
+    },
+    {
+      "name": "mote-vault-sync",
+      "minimum_version": "1.1.0-3",
+      "status": "compatible-public-release-unverified",
+      "replaces_package": "mote-sync",
+      "rejected_historical_version": "1.1.0-2"
+    },
+    {
+      "name": "mote-vault-syncd",
+      "minimum_version": "1.1.0-3",
+      "status": "compatible-public-release-unverified",
+      "replaces_package": "mote-syncd",
+      "rejected_historical_version": "1.1.0-2"
+    },
+    {
+      "name": "model-router",
+      "minimum_version": "0.1.0-1",
+      "status": "compatible-public-release-unverified"
+    },
+    {
+      "name": "model-llm",
+      "minimum_version": "0.1.0-3",
+      "status": "compatible-public-release-unverified"
+    },
+    {
+      "name": "obsidian",
+      "minimum_version": "1.13.7",
+      "status": "external-upstream-provisioning-required"
+    }
+  ],
+  "version": "0.1.0-2",
+  "retired_dependencies": [
+    "ultra-mcp-ssh",
+    "mcp-run",
+    "model-node"
+  ],
+  "renamed_dependencies": {
+    "mote-sync": "mote-vault-sync",
+    "mote-syncd": "mote-vault-syncd",
+    "cx-node": "cx-agent"
+  },
+  "external_provisioning": {
+    "obsidian": {
+      "source": "official-upstream-deb",
+      "version": "1.13.7",
+      "architecture": "amd64",
+      "sha256": "17dc33b49cb3e785ecc27edd2ea0c79e40207798b554fd2886e36ebee7af9ae0",
+      "acquisition_owner": "agent-computer-top-level-installer",
+      "rehost_on_motebus": false,
+      "joint_apt_input_required": true
+    }
+  },
+  "agos_resource_dependencies": {
+    "model-router": "0.1.0-1",
+    "model-llm": "0.1.0-3"
+  }
+}
