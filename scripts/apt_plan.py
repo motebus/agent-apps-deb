@@ -8,12 +8,12 @@ import subprocess
 from package import DEPENDENCIES
 
 CORE={'sphered':'4.1.0-2','moted':'3.6.0-2','mote-proxy':'2.0.0-5','mote-transportd':'2.0.0-6',
-      'mlink':'2.1.0-1','mote-secd':'1.0.0-2','agos':'2.0.0-2','model-router':'0.1.0-1',
-      'model-llm':'0.1.0-3','cx-agent':'0.3.4-3','mote-mcpd':'3.0.0-3','codex-mesh':'1.0.0-2'}
-ULTRA={'redixs':None,'comm':None,'obsidian':'1.13.7','mote-vault-sync':'1.1.0-3','mote-vault-syncd':'1.1.0-3'}
-REQUIRED={'agent-sphere':'0.2.0-1','agent-ultra':'0.1.0-1','sphere-manager':'0.1.0-1',
+      'mlink':'2.1.0-1','mote-secd':'1.0.0-2','agos':'2.1.0-1','model-router':'0.1.0-1',
+      'model-llm':'0.1.0-3','mote-mcpd':'3.0.0-3','cx-mesh':'1.1.0-1'}
+ULTRA={'redixs':'4.1.0-1','comm':'1.0.0-1','obsidian':'1.13.7','mote-vault-sync':'1.1.0-3','mote-vault-syncd':'1.1.0-3'}
+REQUIRED={'agent-sphere':'0.2.0-1','agent-ultra':'0.1.0-1','sphere-manager':'3.1.0-1',
           'agent-apps':'0.2.0-1','medge':'3.1.0-1',**CORE,**ULTRA,**DEPENDENCIES}
-RETIRED={'mote-bridge-mcp','mote-sync','mote-syncd','cx-node','model-node','model-grid','mcp-run','ultra-mcp-ssh','agent-app'}
+RETIRED={'mote-bridge-mcp','mote-sync','mote-syncd','cx-node','cx-agent','codex-mesh','model-node','model-grid','mcp-run','ultra-mcp-ssh','agent-app'}
 
 
 def audit(plan,inventory):

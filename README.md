@@ -4,25 +4,30 @@
 system:
 
 ```text
-agent-sphere    headless core, AGOS, model execution, Codex Mesh and Mote
+agent-sphere    headless core, AGOS, model execution, CX-Mesh and Mote
 agent-ultra     local Redixs, Comm/Telegram, Obsidian and vault sync
 sphere-manager dedicated native management frontend, backed by MEdge
 agent-apps     Jujue, iAgent and additional user applications
 ```
 
-Apps declares Jujue, iAgent, SS-WebOS `2.0.0-11`, MDesk `3.0.0-6`, UChat
+Apps declares Jujue `0.2.0-1`, iAgent `1.0.0-1`, SS-WebOS `2.0.0-12`, MDesk `3.0.0-6`, UChat
 `2.0.0-3`, Agent Sphere `0.2.0-1` and Agent Ultra `0.1.0-1` as required
 dependencies. There are no `Recommends` or `Suggests`. AGOS, model execution,
-Codex Mesh and MCP belong to Core; local knowledge and communication
+CX-Mesh and MCP belong to Core; local knowledge and communication
 infrastructure belongs to Ultra. Core has no TUI. The separate manager owns
 its frontend and MEdge owns its headless management backend.
 
-This source is an **unreleased composition candidate**. Jujue and iAgent are
-approved component names, but their native DEB versions and artifacts have not
-been established. They remain explicit unresolved release gates in
-`dependency-contract.json`; the manifest command refuses release while those
-gates remain. Existing web/OCI source and AGOS's bounded iagent-text profile
-are not substitute packages or proof of a standalone iAgent app.
+The local profile uses compiled Jujue Vue assets in a root-owned SS-WebOS
+catalog. Its isolated desktop bridge invokes the fixed native iAgent client;
+iAgent is a separate domain application that uses admitted local AGOS APIs.
+It has no Mote identity, direct model route, Telegram adapter or system manager.
+Unknown turns recover through get without blind retry. AGOS owns the actual
+local caller grants and model execution boundary.
+
+These dependency floors identify the native local implementations. A version
+floor alone is not artifact acceptance: exact committed-main packages, signed
+aggregate closure and native application-chain checks remain release gates.
+The composition contract makes no installation or readiness claim by itself.
 
 The metapackage contains this README and copyright metadata only. It provides
 no runtime, configuration, daemon, maintainer hook, migration, provider alias

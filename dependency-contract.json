@@ -3,9 +3,9 @@
   "package": "agent-apps",
   "version": "0.2.0-1",
   "dependencies": {
-    "jujue": null,
-    "iagent": null,
-    "ss-webos": "2.0.0-11",
+    "jujue": "0.2.0-1",
+    "iagent": "1.0.0-1",
+    "ss-webos": "2.0.0-12",
     "mdesk": "3.0.0-6",
     "uchat": "2.0.0-3",
     "agent-sphere": "0.2.0-1",
@@ -13,10 +13,7 @@
   },
   "recommends": [],
   "suggests": [],
-  "native_release_gates": {
-    "jujue": "owner-built-deb-version-and-artifact-required",
-    "iagent": "owner-built-deb-version-and-artifact-required"
-  },
+  "native_release_gates": {},
   "installable": false,
   "readiness": false,
   "composition_role": "user-applications",

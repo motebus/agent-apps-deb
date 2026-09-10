@@ -19,12 +19,10 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(set(report['dependencies']),{'jujue','iagent','ss-webos','mdesk','uchat','agent-sphere','agent-ultra'})
         self.assertEqual(report['dependencies']['agent-sphere'],'0.2.0-1')
         self.assertEqual(report['dependencies']['agent-ultra'],'0.1.0-1')
-        self.assertEqual(set(report['native_release_gates']),{'jujue','iagent'})
+        self.assertEqual(report['dependencies']['jujue'],'0.2.0-1')
+        self.assertEqual(report['dependencies']['iagent'],'1.0.0-1')
+        self.assertEqual(report['dependencies']['ss-webos'],'2.0.0-12')
         self.assertFalse(report['installable']);self.assertFalse(report['readiness'])
-
-    def test_native_missing_artifacts_block_release_manifest(self):
-        with tempfile.TemporaryDirectory(dir=ROOT/'build') as temporary:
-            with self.assertRaisesRegex(ValueError,'actual Jujue and iAgent'):package.manifest(Path(temporary))
 
     def test_fake_aliases_manager_or_wrong_owner_cannot_enter_apps(self):
         for field,value in [('Provides','iagent'),('Recommends','sphere-manager'),('Suggests','model-node'),

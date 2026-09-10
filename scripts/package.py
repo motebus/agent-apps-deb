@@ -14,13 +14,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "0.2.0-1"
-DEPENDENCIES = {'jujue': None,
- 'iagent': None,
- 'ss-webos': '2.0.0-11',
- 'mdesk': '3.0.0-6',
- 'uchat': '2.0.0-3',
- 'agent-sphere': '0.2.0-1',
- 'agent-ultra': '0.1.0-1'}
+DEPENDENCIES = {'jujue': '0.2.0-1', 'iagent': '1.0.0-1', 'ss-webos': '2.0.0-12', 'mdesk': '3.0.0-6', 'uchat': '2.0.0-3', 'agent-sphere': '0.2.0-1', 'agent-ultra': '0.1.0-1'}
 DOC = "usr/share/doc/agent-apps/"
 PAYLOAD = {DOC + "README.md", DOC + "copyright"}
 
