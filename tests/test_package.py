@@ -25,29 +25,41 @@ class PackageTests(unittest.TestCase):
             second = package.build(Path(tmp) / "second")
             self.assertEqual(first.read_bytes(), second.read_bytes())
 
-    def test_legacy_agos_is_rejected_and_missing_runtime_is_explicit(self):
+    def test_composition_gates_do_not_claim_runtime_readiness(self):
         report = package.compatibility()
         self.assertFalse(report["installable"])
         self.assertFalse(report["readiness"])
-        self.assertEqual(report["missing_dependencies"][0]["name"], "agos")
+        self.assertEqual(report["missing_dependencies"][0]["name"], "mote-mcpd")
 
     def test_final_package_boundary_without_suggested_retired_runtimes(self):
         expected = {"agos": "2.0.0-2", "ss-webos": "2.0.0-11", "mdesk": "3.0.0-6",
-                    "mote-bridge-mcp": "3.0.0-2", "cx-agent": "0.3.4-2", "uchat": "2.0.0-3",
+                    "mote-mcpd": "3.0.0-3", "cx-agent": "0.3.4-3", "uchat": "2.0.0-3",
                     "mote-vault-sync": "1.1.0-3", "mote-vault-syncd": "1.1.0-3", "mote-secd": "1.0.0-2",
-                    "codex-mesh": "1.0.0-1", "obsidian": "1.13.7", "model-router": "0.1.0-1", "model-llm": "0.1.0-3"}
+                    "codex-mesh": "1.0.0-2", "obsidian": "1.13.7", "model-router": "0.1.0-1", "model-llm": "0.1.0-3"}
         self.assertEqual(package.DEPENDENCIES, expected)
         report = package.compatibility()
         self.assertEqual(report["dependencies"], expected)
         self.assertEqual(report["suggests"], [])
         self.assertNotIn("Suggests", package.control())
-        self.assertEqual(report["version"], "0.1.0-2")
-        self.assertEqual({item["name"] for item in report["missing_dependencies"]}, {"agos", "model-router", "model-llm", "cx-agent", "mote-vault-sync", "mote-vault-syncd", "obsidian"})
+        self.assertEqual(report["version"], "0.1.0-3")
+        self.assertEqual({item["name"] for item in report["missing_dependencies"]}, {"mote-mcpd", "cx-agent", "codex-mesh", "obsidian"})
         self.assertEqual(report["retired_dependencies"], ["ultra-mcp-ssh", "mcp-run", "model-node"])
         self.assertNotIn("on_demand_only", report)
         self.assertEqual(report["agos_resource_dependencies"], {"model-router": "0.1.0-1", "model-llm": "0.1.0-3"})
         self.assertTrue(set(report["agos_resource_dependencies"]).issubset(report["dependencies"]))
         self.assertNotIn("model-grid", report["dependencies"])
+
+    def test_mcp_rename_and_dependents_require_the_aligned_cohort(self):
+        for name, version, replacement in (
+            ("mote-mcpd", "3.0.0-3", "mote-bridge-mcp (>= 3.0.0-2)"),
+            ("cx-agent", "0.3.4-3", "cx-agent (>= 0.3.4-2)"),
+            ("codex-mesh", "1.0.0-2", "codex-mesh (>= 1.0.0-1)")):
+            altered = package.control()
+            altered["Depends"] = altered["Depends"].replace(f"{name} (>= {version})", replacement)
+            with self.subTest(name=name), mock.patch.object(package, "control", return_value=altered):
+                with self.assertRaisesRegex(ValueError, "dependency boundary"):
+                    package.check_control(altered)
+        self.assertEqual(package.compatibility()["renamed_dependencies"]["mote-bridge-mcp"], "mote-mcpd")
 
     def test_retired_ultra_mcp_ssh_cannot_reenter_composition(self):
         for depends in [package.control()["Depends"] + ", ultra-mcp-ssh (>= 2.0.0-1)",
@@ -101,7 +113,7 @@ class PackageTests(unittest.TestCase):
 
     def test_native_cx_floor_cannot_be_lowered_to_historical_runtime(self):
         altered = package.control()
-        altered["Depends"] = altered["Depends"].replace("cx-agent (>= 0.3.4-2)", "cx-agent (>= 0.3.4-1)")
+        altered["Depends"] = altered["Depends"].replace("cx-agent (>= 0.3.4-3)", "cx-agent (>= 0.3.4-1)")
         with mock.patch.object(package, "control", return_value=altered):
             with self.assertRaisesRegex(ValueError, "version floor"):
                 package.check_control(altered)

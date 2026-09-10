@@ -4,57 +4,38 @@
     "agos": "2.0.0-2",
     "ss-webos": "2.0.0-11",
     "mdesk": "3.0.0-6",
-    "mote-bridge-mcp": "3.0.0-2",
-    "cx-agent": "0.3.4-2",
+    "cx-agent": "0.3.4-3",
     "uchat": "2.0.0-3",
     "mote-vault-sync": "1.1.0-3",
     "mote-vault-syncd": "1.1.0-3",
     "mote-secd": "1.0.0-2",
-    "codex-mesh": "1.0.0-1",
+    "codex-mesh": "1.0.0-2",
     "obsidian": "1.13.7",
     "model-router": "0.1.0-1",
-    "model-llm": "0.1.0-3"
+    "model-llm": "0.1.0-3",
+    "mote-mcpd": "3.0.0-3"
   },
   "suggests": [],
   "installable": false,
   "readiness": false,
   "missing_dependencies": [
     {
-      "name": "agos",
-      "minimum_version": "2.0.0-2",
-      "status": "compatible-public-release-unverified",
-      "rejected_historical_version": "1.0.0-16"
+      "name": "mote-mcpd",
+      "minimum_version": "3.0.0-3",
+      "status": "aggregate-publication-required",
+      "replaces_package": "mote-bridge-mcp"
     },
     {
       "name": "cx-agent",
-      "minimum_version": "0.3.4-2",
-      "status": "compatible-public-release-unverified",
-      "replaces_package": "cx-node",
-      "rejected_historical_version": "0.3.4-1"
+      "minimum_version": "0.3.4-3",
+      "status": "aggregate-publication-required",
+      "rejected_historical_version": "0.3.4-2"
     },
     {
-      "name": "mote-vault-sync",
-      "minimum_version": "1.1.0-3",
-      "status": "compatible-public-release-unverified",
-      "replaces_package": "mote-sync",
-      "rejected_historical_version": "1.1.0-2"
-    },
-    {
-      "name": "mote-vault-syncd",
-      "minimum_version": "1.1.0-3",
-      "status": "compatible-public-release-unverified",
-      "replaces_package": "mote-syncd",
-      "rejected_historical_version": "1.1.0-2"
-    },
-    {
-      "name": "model-router",
-      "minimum_version": "0.1.0-1",
-      "status": "compatible-public-release-unverified"
-    },
-    {
-      "name": "model-llm",
-      "minimum_version": "0.1.0-3",
-      "status": "compatible-public-release-unverified"
+      "name": "codex-mesh",
+      "minimum_version": "1.0.0-2",
+      "status": "aggregate-publication-required",
+      "rejected_historical_version": "1.0.0-1"
     },
     {
       "name": "obsidian",
@@ -62,7 +43,7 @@
       "status": "external-upstream-provisioning-required"
     }
   ],
-  "version": "0.1.0-2",
+  "version": "0.1.0-3",
   "retired_dependencies": [
     "ultra-mcp-ssh",
     "mcp-run",
@@ -71,7 +52,8 @@
   "renamed_dependencies": {
     "mote-sync": "mote-vault-sync",
     "mote-syncd": "mote-vault-syncd",
-    "cx-node": "cx-agent"
+    "cx-node": "cx-agent",
+    "mote-bridge-mcp": "mote-mcpd"
   },
   "external_provisioning": {
     "obsidian": {

@@ -8,11 +8,11 @@ import subprocess
 
 from package import DEPENDENCIES
 
-REQUIRED = {"agent-sphere": "0.1.0-5", "agent-apps": "0.1.0-2", **DEPENDENCIES,
+REQUIRED = {"agent-sphere": "0.1.0-9", "agent-apps": "0.1.0-3", **DEPENDENCIES,
             "sphered": "4.1.0-2", "moted": "3.6.0-2", "mote-proxy": "2.0.0-5",
-            "mote-transportd": "2.0.0-6", "medge": "3.0.0-2", "mlink": "2.1.0-1"}
+            "mote-transportd": "2.0.0-6", "medge": "3.0.0-3", "mlink": "2.1.0-1"}
 RETENTION_GUARD_VERSION = "2.0.0-6"
-RETIRED = {"ultra-mcp-ssh", "mcp-run", "model-node", "model-grid", "mote-sync", "mote-syncd", "cx-node", "agent-app"}
+RETIRED = {"ultra-mcp-ssh", "mcp-run", "model-node", "model-grid", "mote-sync", "mote-syncd", "cx-node", "agent-app", "mote-bridge-mcp"}
 NAME = r"[a-z0-9][a-z0-9+.-]*(?::[a-z0-9-]+)?"
 
 

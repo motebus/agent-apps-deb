@@ -13,47 +13,34 @@ import tarfile
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.1.0-2"
+VERSION = "0.1.0-3"
 DEPENDENCIES = {'agos': '2.0.0-2',
  'ss-webos': '2.0.0-11',
  'mdesk': '3.0.0-6',
- 'mote-bridge-mcp': '3.0.0-2',
- 'cx-agent': '0.3.4-2',
+ 'mote-mcpd': '3.0.0-3',
+ 'cx-agent': '0.3.4-3',
  'uchat': '2.0.0-3',
  'mote-vault-sync': '1.1.0-3',
  'mote-vault-syncd': '1.1.0-3',
  'mote-secd': '1.0.0-2',
- 'codex-mesh': '1.0.0-1',
+ 'codex-mesh': '1.0.0-2',
  'obsidian': '1.13.7',
  'model-router': '0.1.0-1',
  'model-llm': '0.1.0-3'}
 AGOS_RESOURCE_DEPENDENCIES = {'model-router': '0.1.0-1', 'model-llm': '0.1.0-3'}
-PUBLIC_RELEASE_GATES = [{'name': 'agos',
-  'minimum_version': '2.0.0-2',
-  'status': 'compatible-public-release-unverified',
-  'rejected_historical_version': '1.0.0-16'},
+PUBLIC_RELEASE_GATES = [{'name': 'mote-mcpd',
+  'minimum_version': '3.0.0-3',
+  'status': 'aggregate-publication-required',
+  'replaces_package': 'mote-bridge-mcp'},
  {'name': 'cx-agent',
-  'minimum_version': '0.3.4-2',
-  'status': 'compatible-public-release-unverified',
-  'replaces_package': 'cx-node',
-  'rejected_historical_version': '0.3.4-1'},
- {'name': 'mote-vault-sync',
-  'minimum_version': '1.1.0-3',
-  'status': 'compatible-public-release-unverified',
-  'replaces_package': 'mote-sync',
-  'rejected_historical_version': '1.1.0-2'},
- {'name': 'mote-vault-syncd',
-  'minimum_version': '1.1.0-3',
-  'status': 'compatible-public-release-unverified',
-  'replaces_package': 'mote-syncd',
-  'rejected_historical_version': '1.1.0-2'},
- {'name': 'model-router',
-  'minimum_version': '0.1.0-1',
-  'status': 'compatible-public-release-unverified'},
- {'name': 'model-llm',
-  'minimum_version': '0.1.0-3',
-  'status': 'compatible-public-release-unverified'}]
-RENAMED_DEPENDENCIES = {'mote-sync': 'mote-vault-sync', 'mote-syncd': 'mote-vault-syncd', 'cx-node': 'cx-agent'}
+  'minimum_version': '0.3.4-3',
+  'status': 'aggregate-publication-required',
+  'rejected_historical_version': '0.3.4-2'},
+ {'name': 'codex-mesh',
+  'minimum_version': '1.0.0-2',
+  'status': 'aggregate-publication-required',
+  'rejected_historical_version': '1.0.0-1'}]
+RENAMED_DEPENDENCIES = {'mote-sync': 'mote-vault-sync', 'mote-syncd': 'mote-vault-syncd', 'cx-node': 'cx-agent', 'mote-bridge-mcp': 'mote-mcpd'}
 EXTERNAL_PROVISIONING_GATE = {'name': 'obsidian', 'minimum_version': '1.13.7', 'status': 'external-upstream-provisioning-required'}
 EXTERNAL_PROVISIONING = {'obsidian': {'source': 'official-upstream-deb',
               'version': '1.13.7',
@@ -115,15 +102,15 @@ def compatibility():
     if contract["retired_dependencies"] != ["ultra-mcp-ssh", "mcp-run", "model-node"]:
         raise ValueError("retired ultra-mcp-ssh, mcp-run, and model-node must remain excluded")
     if contract["renamed_dependencies"] != RENAMED_DEPENDENCIES:
-        raise ValueError("vault package rename mapping differs from the reviewed contract")
+        raise ValueError("package rename mapping differs from the reviewed contract")
     if contract["installable"] is not False or contract["readiness"] is not False:
-        raise ValueError("installation and runtime acceptance have not been established")
+        raise ValueError("composition metadata alone cannot establish installation or runtime acceptance")
     if contract["agos_resource_dependencies"] != AGOS_RESOURCE_DEPENDENCIES:
         raise ValueError("AGOS Router/LLM resource dependency contract differs")
     if contract["external_provisioning"] != EXTERNAL_PROVISIONING:
         raise ValueError("Obsidian must use the exact reviewed external upstream artifact")
     if contract["missing_dependencies"] != PUBLIC_RELEASE_GATES + [EXTERNAL_PROVISIONING_GATE]:
-        raise ValueError("native AGOS, CX Agent, Router/LLM, vault-sync, and external Obsidian installation gates must remain explicit")
+        raise ValueError("MCP rename cohort and external Obsidian installation gates must remain explicit")
     for gate in PUBLIC_RELEASE_GATES:
         if "rejected_historical_version" not in gate:
             continue
@@ -203,9 +190,10 @@ def manifest(out):
         raise ValueError("manifest requires clean committed source")
     commit = git("rev-parse", "HEAD")
     data = {"schema": "agent-apps-release/v1", "package": "agent-apps", "version": control()["Version"],
-            "architecture": "all", "status": "unpublished-composition-review", "installable": False,
+            "architecture": "all", "status": "composition-release", "installable": False,
             "readiness": False, "missing_dependencies": contract["missing_dependencies"],
-            "source": "https://github.com/motebus/agent-apps-deb", "source_commit": commit,
+            "source": "https://github.com/motebus/agent-apps-deb", "source_commit": commit, "source_ref": (os.environ.get("GITHUB_REF") or git("symbolic-ref", "-q", "HEAD")),
+            "build_run": os.environ.get("GITHUB_RUN_ID"),
             "asset": path.name, "sha256": digest(path), "dependency_contract": contract}
     record = out / "release-manifest.json"
     record.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")

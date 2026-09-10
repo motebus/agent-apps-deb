@@ -30,7 +30,7 @@ jobs:
         with:
           name: agent-apps-review-build
           path: |
-            dist/agent-apps_0.1.0-2_all.deb
+            dist/agent-apps_0.1.0-3_all.deb
             dist/release-manifest.json
             dist/SHA256SUMS
           if-no-files-found: error
