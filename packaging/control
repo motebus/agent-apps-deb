@@ -1,14 +1,14 @@
 Package: agent-apps
-Version: 0.1.0-2
+Version: 0.1.0-3
 Architecture: all
 Section: metapackages
 Priority: optional
 Maintainer: MoteBus Engineering <engineering@ypcloud.com>
 Homepage: https://github.com/motebus/agent-apps-deb
-Depends: agos (>= 2.0.0-2), ss-webos (>= 2.0.0-11), mdesk (>= 3.0.0-6), mote-bridge-mcp (>= 3.0.0-2), cx-agent (>= 0.3.4-2), uchat (>= 2.0.0-3), mote-vault-sync (>= 1.1.0-3), mote-vault-syncd (>= 1.1.0-3), mote-secd (>= 1.0.0-2), codex-mesh (>= 1.0.0-1), obsidian (>= 1.13.7), model-router (>= 0.1.0-1), model-llm (>= 0.1.0-3)
+Depends: agos (>= 2.0.0-2), ss-webos (>= 2.0.0-11), mdesk (>= 3.0.0-6), mote-mcpd (>= 3.0.0-3), cx-agent (>= 0.3.4-3), uchat (>= 2.0.0-3), mote-vault-sync (>= 1.1.0-3), mote-vault-syncd (>= 1.1.0-3), mote-secd (>= 1.0.0-2), codex-mesh (>= 1.0.0-2), obsidian (>= 1.13.7), model-router (>= 0.1.0-1), model-llm (>= 0.1.0-3)
 Description: Agent Computer application composition preview
  Composes native Agent intelligence, WebOS, desktop, Obsidian, chat, vault
  sync, security, MCP capabilities, and CX through APT and DPKG dependencies.
- Compatible public native AGOS, merged Router, Model LLM, CX Agent, and renamed vault-sync
- releases remain unverified. Obsidian requires its reviewed official upstream DEB.
+ Mote MCPd retains the on-demand stdio MCP interface.
+ Obsidian requires its reviewed official upstream DEB.
  This composition does not establish Agent Apps or Agent Computer readiness.
