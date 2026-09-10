@@ -35,7 +35,7 @@ or package manager. APT/DPKG and each dependency own lifecycle. Installing
 this package does not provision identity, grant model or tool access, send
 Telegram messages, select a vault, or establish runtime readiness.
 
-The permanent plural installer requests all four entry packages in one
+The canonical `agpc.sh` installer requests all four entry packages in one
 transaction, with the verified official Obsidian DEB owned by Ultra's
 provisioning contract. It preserves existing configuration and identity
 metadata and uses exact migration guards for renamed packages. Removing
