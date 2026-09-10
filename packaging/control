@@ -1,14 +1,13 @@
 Package: agent-apps
-Version: 0.1.0-2
+Version: 0.2.0-1
 Architecture: all
 Section: metapackages
 Priority: optional
 Maintainer: MoteBus Engineering <engineering@ypcloud.com>
 Homepage: https://github.com/motebus/agent-apps-deb
-Depends: agos (>= 2.0.0-2), ss-webos (>= 2.0.0-11), mdesk (>= 3.0.0-6), mote-bridge-mcp (>= 3.0.0-2), cx-agent (>= 0.3.4-2), uchat (>= 2.0.0-3), mote-vault-sync (>= 1.1.0-3), mote-vault-syncd (>= 1.1.0-3), mote-secd (>= 1.0.0-2), codex-mesh (>= 1.0.0-1), obsidian (>= 1.13.7), model-router (>= 0.1.0-1), model-llm (>= 0.1.0-3)
-Description: Agent Computer application composition preview
- Composes native Agent intelligence, WebOS, desktop, Obsidian, chat, vault
- sync, security, MCP capabilities, and CX through APT and DPKG dependencies.
- Compatible public native AGOS, merged Router, Model LLM, CX Agent, and renamed vault-sync
- releases remain unverified. Obsidian requires its reviewed official upstream DEB.
- This composition does not establish Agent Apps or Agent Computer readiness.
+Depends: jujue, iagent, ss-webos (>= 2.0.0-11), mdesk (>= 3.0.0-6), uchat (>= 2.0.0-3), agent-sphere (>= 0.2.0-1), agent-ultra (>= 0.1.0-1)
+Description: Agent Sphere user application composition
+ Composes Jujue, iAgent, WebOS, desktop and chat applications with
+ the separately owned Agent Sphere core and local Agent Ultra infrastructure.
+ This metapackage contains documentation only. Native application release
+ artifacts and owner configuration are required before activation.

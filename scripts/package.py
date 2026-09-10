@@ -13,55 +13,14 @@ import tarfile
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.1.0-2"
-DEPENDENCIES = {'agos': '2.0.0-2',
+VERSION = "0.2.0-1"
+DEPENDENCIES = {'jujue': None,
+ 'iagent': None,
  'ss-webos': '2.0.0-11',
  'mdesk': '3.0.0-6',
- 'mote-bridge-mcp': '3.0.0-2',
- 'cx-agent': '0.3.4-2',
  'uchat': '2.0.0-3',
- 'mote-vault-sync': '1.1.0-3',
- 'mote-vault-syncd': '1.1.0-3',
- 'mote-secd': '1.0.0-2',
- 'codex-mesh': '1.0.0-1',
- 'obsidian': '1.13.7',
- 'model-router': '0.1.0-1',
- 'model-llm': '0.1.0-3'}
-AGOS_RESOURCE_DEPENDENCIES = {'model-router': '0.1.0-1', 'model-llm': '0.1.0-3'}
-PUBLIC_RELEASE_GATES = [{'name': 'agos',
-  'minimum_version': '2.0.0-2',
-  'status': 'compatible-public-release-unverified',
-  'rejected_historical_version': '1.0.0-16'},
- {'name': 'cx-agent',
-  'minimum_version': '0.3.4-2',
-  'status': 'compatible-public-release-unverified',
-  'replaces_package': 'cx-node',
-  'rejected_historical_version': '0.3.4-1'},
- {'name': 'mote-vault-sync',
-  'minimum_version': '1.1.0-3',
-  'status': 'compatible-public-release-unverified',
-  'replaces_package': 'mote-sync',
-  'rejected_historical_version': '1.1.0-2'},
- {'name': 'mote-vault-syncd',
-  'minimum_version': '1.1.0-3',
-  'status': 'compatible-public-release-unverified',
-  'replaces_package': 'mote-syncd',
-  'rejected_historical_version': '1.1.0-2'},
- {'name': 'model-router',
-  'minimum_version': '0.1.0-1',
-  'status': 'compatible-public-release-unverified'},
- {'name': 'model-llm',
-  'minimum_version': '0.1.0-3',
-  'status': 'compatible-public-release-unverified'}]
-RENAMED_DEPENDENCIES = {'mote-sync': 'mote-vault-sync', 'mote-syncd': 'mote-vault-syncd', 'cx-node': 'cx-agent'}
-EXTERNAL_PROVISIONING_GATE = {'name': 'obsidian', 'minimum_version': '1.13.7', 'status': 'external-upstream-provisioning-required'}
-EXTERNAL_PROVISIONING = {'obsidian': {'source': 'official-upstream-deb',
-              'version': '1.13.7',
-              'architecture': 'amd64',
-              'sha256': '17dc33b49cb3e785ecc27edd2ea0c79e40207798b554fd2886e36ebee7af9ae0',
-              'acquisition_owner': 'agent-computer-top-level-installer',
-              'rehost_on_motebus': False,
-              'joint_apt_input_required': True}}
+ 'agent-sphere': '0.2.0-1',
+ 'agent-ultra': '0.1.0-1'}
 DOC = "usr/share/doc/agent-apps/"
 PAYLOAD = {DOC + "README.md", DOC + "copyright"}
 
@@ -99,37 +58,25 @@ def check_control(meta):
     if set(meta) != {"Package", "Version", "Architecture", "Section", "Priority",
                     "Maintainer", "Homepage", "Depends", "Description"}:
         raise ValueError("unexpected control fields")
-    deps = meta["Depends"].split(",")
-    matches = [re.fullmatch(r"([a-z][a-z0-9-]*) \(>= ([0-9][0-9A-Za-z.+:~\-]*)\)", d.strip()) for d in deps]
-    if len(deps) != 13 or not all(matches) or {m[1]: m[2] for m in matches} != DEPENDENCIES:
+    expected_depends = ", ".join(name + (f" (>= {version})" if version else "")
+                                 for name, version in DEPENDENCIES.items())
+    if meta["Depends"] != expected_depends:
         raise ValueError("dependency boundary or version floor violation")
 
 
 def compatibility():
     check_control(control())
     contract = json.loads((ROOT / "dependency-contract.json").read_text())
-    if contract["version"] != VERSION or contract["dependencies"] != DEPENDENCIES or contract["suggests"] != []:
-        raise ValueError("dependency contract differs from control")
-    if contract.get("on_demand_only"):
-        raise ValueError("retired packages must not be advertised as active on-demand dependencies")
-    if contract["retired_dependencies"] != ["ultra-mcp-ssh", "mcp-run", "model-node"]:
-        raise ValueError("retired ultra-mcp-ssh, mcp-run, and model-node must remain excluded")
-    if contract["renamed_dependencies"] != RENAMED_DEPENDENCIES:
-        raise ValueError("vault package rename mapping differs from the reviewed contract")
+    if (contract["version"] != VERSION or contract["dependencies"] != DEPENDENCIES or
+            contract["package"] != "agent-apps" or contract["recommends"] or contract["suggests"]):
+        raise ValueError("application dependency contract differs from control")
+    unresolved = {name for name, version in DEPENDENCIES.items() if version is None}
+    if set(contract["native_release_gates"]) != unresolved:
+        raise ValueError("unbuilt native application dependencies must remain explicit")
     if contract["installable"] is not False or contract["readiness"] is not False:
-        raise ValueError("installation and runtime acceptance have not been established")
-    if contract["agos_resource_dependencies"] != AGOS_RESOURCE_DEPENDENCIES:
-        raise ValueError("AGOS Router/LLM resource dependency contract differs")
-    if contract["external_provisioning"] != EXTERNAL_PROVISIONING:
-        raise ValueError("Obsidian must use the exact reviewed external upstream artifact")
-    if contract["missing_dependencies"] != PUBLIC_RELEASE_GATES + [EXTERNAL_PROVISIONING_GATE]:
-        raise ValueError("native AGOS, CX Agent, Router/LLM, vault-sync, and external Obsidian installation gates must remain explicit")
-    for gate in PUBLIC_RELEASE_GATES:
-        if "rejected_historical_version" not in gate:
-            continue
-        if subprocess.run(["dpkg", "--compare-versions", gate["rejected_historical_version"],
-                           "ge", DEPENDENCIES[gate["name"]]]).returncode != 1:
-            raise ValueError("historical component must not satisfy " + gate["name"] + " requirement")
+        raise ValueError("composition metadata cannot establish installation or runtime readiness")
+    if set(DEPENDENCIES) != {"jujue", "iagent", "ss-webos", "mdesk", "uchat", "agent-sphere", "agent-ultra"}:
+        raise ValueError("wrong application ownership boundary")
     return contract
 
 
@@ -197,6 +144,8 @@ def digest(path):
 def manifest(out):
     """Bind a local review artifact; this is not a publication or readiness gate."""
     contract = compatibility()
+    if contract["native_release_gates"]:
+        raise ValueError("release blocked: actual Jujue and iAgent package artifacts and versions are required")
     path = out / ("agent-apps_" + control()["Version"] + "_all.deb")
     verify(path)
     if git("status", "--porcelain"):
@@ -204,7 +153,7 @@ def manifest(out):
     commit = git("rev-parse", "HEAD")
     data = {"schema": "agent-apps-release/v1", "package": "agent-apps", "version": control()["Version"],
             "architecture": "all", "status": "unpublished-composition-review", "installable": False,
-            "readiness": False, "missing_dependencies": contract["missing_dependencies"],
+            "readiness": False, "native_release_gates": contract["native_release_gates"],
             "source": "https://github.com/motebus/agent-apps-deb", "source_commit": commit,
             "asset": path.name, "sha256": digest(path), "dependency_contract": contract}
     record = out / "release-manifest.json"
