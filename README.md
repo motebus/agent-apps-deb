@@ -1,21 +1,27 @@
 # Agent Apps
 
-`agent-apps 0.2.0-1` composes user applications in the four-package Agent Sphere
+`agent-apps 0.2.0-2` composes user applications in the four-package Agent Sphere
 system:
 
 ```text
 agent-sphere    headless core, AGOS, model execution, CX-Mesh and Mote
 agent-ultra     local Redixs, Comm/Telegram, Obsidian and vault sync
-sphere-manager dedicated native management frontend, backed by MEdge
+agpc-manager   dedicated native management frontend, backed by MEdge
 agent-apps     Jujue, iAgent and additional user applications
 ```
 
 Apps declares Jujue `0.2.0-1`, iAgent `1.0.0-1`, SS-WebOS `2.0.0-12`, MDesk `3.0.0-6`, UChat
-`2.0.0-3`, Agent Sphere `0.2.0-1` and Agent Ultra `0.1.0-1` as required
+`3.0.0-1`, Agent Sphere `0.2.0-1` and Agent Ultra `0.1.0-1` as required
 dependencies. There are no `Recommends` or `Suggests`. AGOS, model execution,
 CX-Mesh and MCP belong to Core; local knowledge and communication
 infrastructure belongs to Ultra. Core has no TUI. The separate manager owns
 its frontend and MEdge owns its headless management backend.
+
+The uChat floor upgrades existing AGPC installations to the persistent Inbox
+implementation. `uchat` owns its `uchatd` service dependency, and `uchatd` owns
+its private Redis instance. `mote-transportd` remains the D/MSG transport owner;
+`mote-chatd` is retired as a chat service. Agents/CX-Mesh retain execution
+authority; the messaging daemon performs no inference or execution.
 
 The local profile uses compiled Jujue Vue assets in a root-owned SS-WebOS
 catalog. Its isolated desktop bridge invokes the fixed native iAgent client;
