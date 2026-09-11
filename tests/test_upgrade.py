@@ -34,10 +34,10 @@ class UpgradeTest(unittest.TestCase):
             status.write_text('\n'.join(item + 'Status: install ok installed\n' for item in installed))
             before = status.read_bytes()
             controls = [(ROOT / 'packaging/control').read_text(),
-                        record('uchat', '3.0.0-1', 'uchatd (>= 0.1.0-1)'),
+                        record('uchat', '3.1.0-1', 'uchatd (>= 0.2.0-1)'),
                         record('redis-server', '5:7.0.0')]
             if not missing_daemon:
-                controls.append(record('uchatd', '0.1.0-1', 'redis-server (>= 5:6.2)'))
+                controls.append(record('uchatd', '0.2.0-1', 'redis-server (>= 5:6.2)'))
             # Synthetic metadata archives supply valid downloadable APT records.
             index = []
             for number, control in enumerate(controls):

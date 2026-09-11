@@ -1,13 +1,13 @@
 {
   "schema": "agent-apps-dependency-contract/v2",
   "package": "agent-apps",
-  "version": "0.2.0-2",
+  "version": "0.2.0-3",
   "dependencies": {
     "jujue": "0.2.0-1",
     "iagent": "1.0.0-1",
     "ss-webos": "2.0.0-12",
     "mdesk": "3.0.0-6",
-    "uchat": "3.0.0-1",
+    "uchat": "3.1.0-1",
     "agent-sphere": "0.2.0-1",
     "agent-ultra": "0.1.0-1"
   },
