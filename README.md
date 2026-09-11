@@ -1,6 +1,6 @@
 # Agent Apps
 
-`agent-apps 0.2.0-2` composes user applications in the four-package Agent Sphere
+`agent-apps 0.2.0-3` composes user applications in the four-package Agent Sphere
 system:
 
 ```text
@@ -11,7 +11,7 @@ agent-apps     Jujue, iAgent and additional user applications
 ```
 
 Apps declares Jujue `0.2.0-1`, iAgent `1.0.0-1`, SS-WebOS `2.0.0-12`, MDesk `3.0.0-6`, UChat
-`3.0.0-1`, Agent Sphere `0.2.0-1` and Agent Ultra `0.1.0-1` as required
+`3.1.0-1`, Agent Sphere `0.2.0-1` and Agent Ultra `0.1.0-1` as required
 dependencies. There are no `Recommends` or `Suggests`. AGOS, model execution,
 CX-Mesh and MCP belong to Core; local knowledge and communication
 infrastructure belongs to Ultra. Core has no TUI. The separate manager owns

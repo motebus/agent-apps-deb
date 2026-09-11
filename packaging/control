@@ -1,11 +1,11 @@
 Package: agent-apps
-Version: 0.2.0-2
+Version: 0.2.0-3
 Architecture: all
 Section: metapackages
 Priority: optional
 Maintainer: MoteBus Engineering <engineering@ypcloud.com>
 Homepage: https://github.com/motebus/agent-apps-deb
-Depends: jujue (>= 0.2.0-1), iagent (>= 1.0.0-1), ss-webos (>= 2.0.0-12), mdesk (>= 3.0.0-6), uchat (>= 3.0.0-1), agent-sphere (>= 0.2.0-1), agent-ultra (>= 0.1.0-1)
+Depends: jujue (>= 0.2.0-1), iagent (>= 1.0.0-1), ss-webos (>= 2.0.0-12), mdesk (>= 3.0.0-6), uchat (>= 3.1.0-1), agent-sphere (>= 0.2.0-1), agent-ultra (>= 0.1.0-1)
 Description: Agent Sphere user application composition
  Composes Jujue, iAgent, WebOS, desktop and chat applications with
  the separately owned Agent Sphere core and local Agent Ultra infrastructure.
