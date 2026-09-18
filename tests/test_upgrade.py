@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class UpgradeTest(unittest.TestCase):
-    def plan(self, missing_daemon=False):
+    def plan(self, missing_daemon=False, current=False):
         contract = json.loads((ROOT / 'dependency-contract.json').read_text())
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -27,17 +27,19 @@ class UpgradeTest(unittest.TestCase):
                         + (f'Depends: {depends}\n' if depends else ''))
             old_depends = ', '.join(f'{name} (>= {"2.0.0-3" if name == "uchat" else version})'
                                     for name, version in contract['dependencies'].items())
-            installed = [record(name, '2.0.0-3' if name == 'uchat' else version)
+            installed = [record(name, ('3.2.0-2' if current else '2.0.0-3') if name == 'uchat' else version)
                          for name, version in contract['dependencies'].items()]
-            installed.append(record('agent-apps', '0.2.0-1', old_depends))
+            installed.append(record('agent-apps', '0.2.0-3' if current else '0.2.0-1', old_depends))
+            if current:
+                installed.extend([record('uchatd', '0.4.0-1'), record('redis-server', '5:7.0.0')])
             status = root / 'status'
             status.write_text('\n'.join(item + 'Status: install ok installed\n' for item in installed))
             before = status.read_bytes()
             controls = [(ROOT / 'packaging/control').read_text(),
-                        record('uchat', '3.1.0-1', 'uchatd (>= 0.2.0-1)'),
+                        record('uchat', '3.2.0-3', 'uchatd (>= 0.4.0-2)'),
                         record('redis-server', '5:7.0.0')]
             if not missing_daemon:
-                controls.append(record('uchatd', '0.2.0-1', 'redis-server (>= 5:6.2)'))
+                controls.append(record('uchatd', '0.4.0-2', 'redis-server (>= 5:6.2)'))
             # Synthetic metadata archives supply valid downloadable APT records.
             index = []
             for number, control in enumerate(controls):
@@ -69,6 +71,13 @@ class UpgradeTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual({line.split()[1] for line in result.stdout.splitlines() if line.startswith('Inst ')},
                          {'agent-apps', 'uchat', 'uchatd', 'redis-server'})
+        self.assertNotIn('Remv ', result.stdout)
+
+    def test_current_apps_upgrades_both_installed_chat_packages(self):
+        result = self.plan(current=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual({line.split()[1] for line in result.stdout.splitlines() if line.startswith('Inst ')},
+                         {'agent-apps', 'uchat', 'uchatd'})
         self.assertNotIn('Remv ', result.stdout)
 
     def test_missing_daemon_refuses_incomplete_upgrade(self):
