@@ -1,14 +1,14 @@
 {
-  "schema": "agent-apps-dependency-contract/v2",
-  "package": "agent-apps",
-  "version": "0.2.0-4",
+  "schema": "agpc-apps-dependency-contract/v1",
+  "package": "agpc-apps",
+  "version": "0.3.0-1",
   "dependencies": {
     "jujue": "0.2.0-1",
     "iagent": "1.0.0-1",
     "ss-webos": "2.0.0-12",
     "mdesk": "3.0.0-6",
-    "uchat": "3.2.0-3",
-    "agent-sphere": "0.2.0-1",
+    "uchat": "3.2.0-4",
+    "agent-sphere": "0.3.0-1",
     "agent-ultra": "0.1.0-1"
   },
   "recommends": [],
@@ -23,5 +23,11 @@
     "model-node",
     "model-grid",
     "mote-bridge-mcp"
-  ]
+  ],
+  "transition": {
+    "package": "agent-apps",
+    "version": "0.3.0-1",
+    "depends": "agpc-apps (= 0.3.0-1)",
+    "removal_required": false
+  }
 }

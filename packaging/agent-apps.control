@@ -1,0 +1,12 @@
+Package: agent-apps
+Version: 0.3.0-1
+Architecture: all
+Section: oldlibs
+Priority: optional
+Maintainer: MoteBus Engineering <engineering@ypcloud.com>
+Homepage: https://github.com/motebus/agent-apps-deb
+Depends: agpc-apps (= 0.3.0-1)
+Description: Transitional package for the agpc-apps rename
+ Agent Apps has been renamed to AGPC Apps. This documentation-only transition
+ preserves upgrades of the previous package name by requiring the new package.
+ It runs no migration hooks and removes no applications or user data.

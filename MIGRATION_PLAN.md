@@ -1,20 +1,36 @@
-# Four-package migration
+# Agent Apps to AGPC Apps
 
-The previous Apps package selected thirteen applications and runtimes. Version
-0.2.0-1 reassigns ownership through dependencies without removing installed
-runtime files or their configuration:
+The active composition package is `agpc-apps 0.3.0-1`. Publish the accompanying
+`agent-apps 0.3.0-1` transition in the same repository cohort. It depends exactly
+on `agpc-apps (= 0.3.0-1)` and has no direct application dependencies or hooks.
+Historical `agent-apps` releases and the source repository remain intact.
 
-- Core owns AGOS, Codex Mesh, model execution, MCP and Mote/security/local I/O.
-- Ultra owns Redixs, local Comm/Telegram, Obsidian and the vault sync pair.
-- Sphere Manager owns the dedicated frontend and requires the MEdge backend.
-- Apps owns Jujue, iAgent, SS-WebOS, MDesk and UChat, and requires Core and Ultra.
+The new package carries documentation under `/usr/share/doc/agpc-apps`; the
+transition retains documentation under `/usr/share/doc/agent-apps`. No payload
+paths overlap. `Provides`, `Breaks`, `Conflicts` and `Replaces` are unnecessary
+and intentionally absent. Keeping both metapackages installed allows dependents
+of the old name and existing manual/automatic installation marks to survive.
 
-The installer requests all four entries. Dropping a direct dependency does
-not authorize removal or autoremove. Existing protected transport ownership
-and exact bridge/CX/vault rename checks remain in the installer under APT's
-lock. No configuration-only record is purged incidentally.
+Fresh full installations select `agpc-apps=0.3.0-1`. Existing installations also
+request `agent-apps=0.3.0-1`, making APT replace the old composition metadata
+with the transition and retain all component packages. Validate the exact plan
+with `--simulate --no-remove` before the reviewed transaction. Do not remove,
+purge or autoremove the old name to accomplish this rename. Ordinary APT
+upgrades of the old name also pull in the new package through its exact dependency.
 
-Jujue and iAgent require actual owner-built Debian artifacts before their
-versions are fixed and release is allowed. No empty wrapper, virtual provider
-or AGOS alias may satisfy this requirement. All old immutable release tags and
-artifacts remain historical evidence.
+`agpc.sh` selects standard native AGPC, including contextd owned by the core.
+`agpc-full.sh` adds the Apps composition and full-profile dependencies. Apps
+requires the new `agent-sphere >= 0.3.0-1` composition and the current native
+uChat floor; neither this rename nor an Apps package install performs the
+separate SQLite Inbox migration required by uchatd 0.5.0.
+
+The core owns AGOS, execution, CX-Mesh, Mote and contextd. Ultra owns local
+knowledge and communication services. AGPC Manager/MEdge own management. Apps
+owns the Jujue, iAgent, SS-WebOS, MDesk and uChat composition. The rename changes
+no protected configuration, transport journal, account, Mote identity, vault,
+registration authority or application data.
+
+Before publication, verify native leaf artifacts and the signed full dependency
+closure, including the new core/contextd package. Isolated APT simulations and
+DEB payload audits are package evidence only; configured runtime acceptance
+remains a separate gate. No Docker/OCI image is built for AGPC.

@@ -1,4 +1,4 @@
-name: Validate Agent Apps composition
+name: Validate native AGPC Apps composition
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: agent-apps-validation-${{ github.ref }}
+  group: agpc-apps-validation-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -28,8 +28,9 @@ jobs:
           python3 scripts/package.py manifest
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: agent-apps-review-build
+          name: agpc-apps-review-build
           path: |
+            dist/agpc-apps_*_all.deb
             dist/agent-apps_*_all.deb
             dist/release-manifest.json
             dist/SHA256SUMS

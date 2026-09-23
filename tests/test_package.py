@@ -17,7 +17,7 @@ class PackageTests(unittest.TestCase):
     def test_exact_user_application_boundary_requires_core_and_ultra(self):
         report=package.compatibility()
         self.assertEqual(set(report['dependencies']),{'jujue','iagent','ss-webos','mdesk','uchat','agent-sphere','agent-ultra'})
-        self.assertEqual(report['dependencies']['agent-sphere'],'0.2.0-1')
+        self.assertEqual(report['dependencies']['agent-sphere'],'0.3.0-1')
         self.assertEqual(report['dependencies']['agent-ultra'],'0.1.0-1')
         self.assertEqual(report['dependencies']['jujue'],'0.2.0-1')
         self.assertEqual(report['dependencies']['iagent'],'1.0.0-1')
@@ -34,8 +34,9 @@ class PackageTests(unittest.TestCase):
 
     def test_reproducible_documentation_only_artifact(self):
         with tempfile.TemporaryDirectory(dir=ROOT/'build') as temporary:
-            first=package.build(Path(temporary)/'a');second=package.build(Path(temporary)/'b')
-            self.assertEqual(first.read_bytes(),second.read_bytes())
+            for name in (package.PACKAGE, package.LEGACY):
+                first=package.build(Path(temporary)/'a',name);second=package.build(Path(temporary)/'b',name)
+                self.assertEqual(first.read_bytes(),second.read_bytes())
 
     def test_hooks_fake_runtime_and_configuration_are_rejected(self):
         for extra in ['DEBIAN/postinst','usr/bin/iagent','etc/agent-apps.conf']:
@@ -45,3 +46,24 @@ class PackageTests(unittest.TestCase):
                 file=stage/extra;file.parent.mkdir(parents=True,exist_ok=True);file.write_text('invalid\n');file.chmod(0o755)
                 bad=base/'bad.deb';subprocess.run(['dpkg-deb','--build','--root-owner-group',str(stage),str(bad)],check=True,capture_output=True)
                 with self.assertRaises(ValueError):package.verify(bad)
+
+    def test_legacy_name_is_an_exact_transition_without_overlapping_payloads(self):
+        legacy = package.control(package.LEGACY)
+        self.assertEqual(legacy['Depends'], 'agpc-apps (= 0.3.0-1)')
+        self.assertEqual(legacy['Section'], 'oldlibs')
+        self.assertFalse({'Provides','Conflicts','Breaks','Replaces'}.intersection(legacy))
+        with tempfile.TemporaryDirectory(dir=ROOT/'build') as temporary:
+            files = []
+            for name in (package.PACKAGE, package.LEGACY):
+                path = package.build(Path(temporary), name)
+                with package.archive(path, '--fsys-tarfile') as archive:
+                    files.append({m.name for m in archive if m.isfile()})
+            self.assertFalse(files[0].intersection(files[1]))
+
+    def test_transition_cannot_alias_runtime_or_loosen_exact_new_version(self):
+        original = package.control(package.LEGACY)
+        for field, value in [('Depends','agpc-apps (>= 0.3.0-1)'),('Provides','agpc-apps'),
+                             ('Depends','jujue (>= 0.2.0-1)'),('Conflicts','agpc-apps')]:
+            altered = {**original, field:value}
+            with self.subTest(field=field,value=value), mock.patch.object(package,'control',return_value=altered):
+                with self.assertRaises(ValueError): package.check_control(altered)

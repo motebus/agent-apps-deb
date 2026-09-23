@@ -11,7 +11,7 @@ class FourPackagePlanTests(unittest.TestCase):
         self.assertEqual(len(apt_plan.REQUIRED),26)
         self.assertNotIn('medge',apt_plan.CORE)
         self.assertTrue({'redixs','comm','obsidian'}.issubset(apt_plan.ULTRA))
-        self.assertTrue({'agent-sphere','agent-ultra','sphere-manager','agent-apps'}.issubset(apt_plan.REQUIRED))
+        self.assertTrue({'agent-sphere','agent-ultra','agpc-manager','agpc-apps'}.issubset(apt_plan.REQUIRED))
 
     def test_incomplete_inventory_cannot_be_declared_resolved(self):
         for plan,inventory in [('', ''),('Inst jujue (99.0 fixture)','')]:
@@ -27,3 +27,12 @@ class FourPackagePlanTests(unittest.TestCase):
             for plan in ['Remv mote-bridge-mcp [3.0.0-2]','Purg mote-chatd','E: unresolved']:
                 with self.assertRaises(ValueError):apt_plan.audit(plan,inventory)
             with self.assertRaisesRegex(ValueError,'required package'):apt_plan.audit('',inventory.replace('agos\t2.1.0-1','agos\t1.0.0-1'))
+
+    def test_old_name_requires_reviewed_transition_and_keeps_application_closure(self):
+        inventory='\n'.join(f'{n}\t{v}\tii ' for n,v in apt_plan.REQUIRED.items())
+        with self.assertRaisesRegex(ValueError,'transitional upgrade'):
+            apt_plan.audit('', inventory+'\nagent-apps\t0.2.0-4\tii ')
+        report=apt_plan.audit('Inst agent-apps [0.2.0-4] (0.3.0-1 fixture)',
+                              inventory+'\nagent-apps\t0.2.0-4\tii ')
+        self.assertFalse(report['runtime_ready'])
+        self.assertEqual(report['resolved']['agpc-apps'],'0.3.0-1')
